@@ -27,6 +27,7 @@ export default defineManifest({
     'storage',
     'activeTab',
   ],
+
   host_permissions: [
     'https://api.github.com/*',
     'https://open.bigmodel.cn/*',
