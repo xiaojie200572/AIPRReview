@@ -21,7 +21,7 @@ function submit() {
   <div class="chat-input">
     <input
       v-model="text"
-      placeholder="杈撳叆鎮ㄧ殑闂..."
+      placeholder="输入您的问题..."
       :disabled="disabled"
       @keyup.enter="submit"
     />
@@ -30,13 +30,13 @@ function submit() {
       :disabled="!text.trim()"
       @click="submit"
     >
-      鍙戦€?    </button>
+      发送    </button>
     <button
       v-else
       class="btn-cancel"
       @click="$emit('cancel')"
     >
-      脳 鍋滄
+      × 停止
     </button>
   </div>
 </template>
@@ -46,26 +46,28 @@ function submit() {
   display: flex;
   gap: 8px;
   padding: 12px 16px;
-  border-top: 1px solid #e5e7eb;
-  background: #fff;
+  border-top: 1px solid var(--border-secondary);
+  background: var(--bg-primary);
 }
 .chat-input input {
   flex: 1;
   padding: 8px 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-primary);
   border-radius: 6px;
   font-size: 13px;
   outline: none;
+  color: var(--text-primary);
+  background: var(--bg-primary);
 }
 .chat-input input:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-focus);
 }
 .chat-input button {
   padding: 8px 16px;
   border: none;
   border-radius: 6px;
-  background: #2563eb;
+  background: var(--accent);
   color: #fff;
   cursor: pointer;
   font-size: 13px;
