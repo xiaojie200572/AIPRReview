@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 
 const emit = defineEmits(['close'])
 
@@ -7,21 +7,15 @@ const apiKey = ref('')
 const baseUrl = ref('')
 const modelName = ref('')
 const githubToken = ref('')
-const darkMode = ref(false)
 const saving = ref(false)
 const saved = ref(false)
 
-watch(darkMode, (val) => {
-  document.documentElement.setAttribute('data-theme', val ? 'dark' : 'light')
-})
-
 async function loadSettings() {
-  const settings = await chrome.storage.local.get(['apiKey', 'baseUrl', 'modelName', 'githubToken', 'darkMode'])
+  const settings = await chrome.storage.local.get(['apiKey', 'baseUrl', 'modelName', 'githubToken'])
   apiKey.value = settings.apiKey || ''
   baseUrl.value = settings.baseUrl || 'https://open.bigmodel.cn/api/paas/v4'
   modelName.value = settings.modelName || 'glm-4-flash'
   githubToken.value = settings.githubToken || ''
-  darkMode.value = settings.darkMode || false
 }
 
 async function save() {
@@ -32,7 +26,6 @@ async function save() {
     baseUrl: baseUrl.value,
     modelName: modelName.value,
     githubToken: githubToken.value,
-    darkMode: darkMode.value,
   })
   saving.value = false
   saved.value = true
@@ -65,13 +58,6 @@ onMounted(loadSettings)
         <label>
           <span>GitHub Token（可选，私有仓库使用）</span>
           <input v-model="githubToken" type="password" placeholder="选填" />
-        </label>
-        <label class="toggle-row">
-          <span>黑夜模式</span>
-          <label class="toggle">
-            <input v-model="darkMode" type="checkbox" />
-            <span class="slider"></span>
-          </label>
         </label>
         <p class="hint">支持任意 OpenAI 兼容格式的模型，切换模型只需修改 Base URL 和模型名称。</p>
       </div>
@@ -146,11 +132,6 @@ onMounted(loadSettings)
 .modal-body input:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 2px var(--accent-focus);
-}
-.toggle-row {
-  flex-direction: row !important;
-  align-items: center;
-  justify-content: space-between;
 }
 .hint {
   font-size: 11px;

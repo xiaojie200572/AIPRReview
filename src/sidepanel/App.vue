@@ -12,6 +12,7 @@ const loading = ref(false)
 const errorMsg = ref('')
 const showSettings = ref(false)
 const savedUrl = ref('')
+const darkMode = ref(false)
 
 function onStreamChunk(payload) {
   content.value += payload.chunk
@@ -26,6 +27,12 @@ function onStreamDone(payload) {
 function onStreamError(payload) {
   errorMsg.value = payload.error
   loading.value = false
+}
+
+async function toggleTheme() {
+  darkMode.value = !darkMode.value
+  document.documentElement.setAttribute('data-theme', darkMode.value ? 'dark' : 'light')
+  await chrome.storage.local.set({ darkMode: darkMode.value })
 }
 
 async function analyze(prUrl) {
@@ -43,6 +50,8 @@ onMounted(async () => {
   on('STREAM_ERROR', onStreamError)
   const { prUrl } = await chrome.storage.session.get('prUrl')
   if (prUrl) savedUrl.value = prUrl
+  const { darkMode: dm } = await chrome.storage.local.get('darkMode')
+  darkMode.value = dm || false
 })
 
 onUnmounted(() => {
@@ -56,7 +65,10 @@ onUnmounted(() => {
   <div class="app">
     <header class="app-header">
       <h1>AI PR Review</h1>
-      <button class="btn-icon" @click="showSettings = true" title="设置">⚙</button>
+      <div class="header-actions">
+        <button class="btn-icon" @click="toggleTheme" :title="darkMode ? '切换浅色模式' : '切换黑夜模式'">{{ darkMode ? '☀' : '☾' }}</button>
+        <button class="btn-icon" @click="showSettings = true" title="设置">⚙</button>
+      </div>
     </header>
     <PRInput :loading="loading" :url="savedUrl" @analyze="analyze" />
     <ModeSelector v-model="mode" :disabled="loading" />
@@ -84,6 +96,10 @@ onUnmounted(() => {
   margin: 0;
   font-size: 16px;
   font-weight: 600;
+}
+.header-actions {
+  display: flex;
+  gap: 6px;
 }
 .btn-icon {
   background: none;
