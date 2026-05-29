@@ -1,12 +1,15 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 
 const props = defineProps({
-  loading: Boolean,
+  buttonState: { type: String, default: 'analyze' },
   url: { type: String, default: '' },
+  exportContent: { type: String, default: '' },
+  exportFilename: { type: String, default: '' },
+  exportDisabled: { type: Boolean, default: false },
 })
 
-const emit = defineEmits(['analyze'])
+const emit = defineEmits(['analyze', 'export', 'cancel'])
 
 const url = ref(props.url)
 
@@ -14,9 +17,37 @@ watch(() => props.url, (val) => {
   if (val) url.value = val
 })
 
-function submit() {
-  if (!url.value.trim() || props.loading) return
-  emit('analyze', url.value.trim())
+const label = computed(() => {
+  switch (props.buttonState) {
+    case 'loading': return '× 取消'
+    case 'export': return '导出'
+    default: return '分析'
+  }
+})
+
+const disabled = computed(() => {
+  if (props.buttonState === 'loading') return false
+  if (props.buttonState === 'analyze') return !url.value.trim()
+  if (props.buttonState === 'export') return props.exportDisabled
+  return false
+})
+
+const btnClass = computed(() => {
+  if (props.buttonState === 'loading') return ['btn', 'btn-cancel']
+  if (props.buttonState === 'export') return ['btn', 'btn-export']
+  return ['btn']
+})
+
+function handleClick() {
+  if (props.buttonState === 'analyze') {
+    if (!url.value.trim()) return
+    emit('analyze', url.value.trim())
+  } else if (props.buttonState === 'loading') {
+    emit('cancel')
+  } else if (props.buttonState === 'export') {
+    if (props.exportDisabled) return
+    emit('export')
+  }
 }
 </script>
 
@@ -26,11 +57,15 @@ function submit() {
       <input
         v-model="url"
         placeholder="https://github.com/owner/repo/pull/123"
-        :disabled="loading"
-        @keyup.enter="submit"
+        :disabled="buttonState === 'loading'"
+        @keyup.enter="buttonState === 'analyze' && url.trim() && emit('analyze', url.trim())"
       />
-      <button :disabled="loading || !url.trim()" @click="submit">
-        {{ loading ? '分析中...' : '分析' }}
+      <button
+        :class="btnClass"
+        :disabled="disabled"
+        @click="handleClick"
+      >
+        {{ label }}
       </button>
     </div>
   </div>
@@ -59,7 +94,7 @@ function submit() {
   border-color: var(--accent);
   box-shadow: 0 0 0 2px var(--accent-focus);
 }
-.input-row button {
+.btn {
   padding: 8px 16px;
   border: none;
   border-radius: 6px;
@@ -69,8 +104,20 @@ function submit() {
   font-size: 13px;
   white-space: nowrap;
 }
-.input-row button:disabled {
+.btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+.btn-export {
+  background: #059669;
+}
+.btn-export:hover:not(:disabled) {
+  background: #047857;
+}
+.btn-cancel {
+  background: #dc2626;
+}
+.btn-cancel:hover:not(:disabled) {
+  background: #b91c1c;
 }
 </style>
