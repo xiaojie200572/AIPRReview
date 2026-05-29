@@ -1,3 +1,163 @@
+<script setup>
+import { ref, onMounted } from 'vue'
+
+const emit = defineEmits(['close'])
+
+const apiKey = ref('')
+const baseUrl = ref('')
+const modelName = ref('')
+const githubToken = ref('')
+const saving = ref(false)
+const saved = ref(false)
+
+async function loadSettings() {
+  const settings = await chrome.storage.local.get(['apiKey', 'baseUrl', 'modelName', 'githubToken'])
+  apiKey.value = settings.apiKey || ''
+  baseUrl.value = settings.baseUrl || 'https://open.bigmodel.cn/api/paas/v4'
+  modelName.value = settings.modelName || 'glm-4-flash'
+  githubToken.value = settings.githubToken || ''
+}
+
+async function save() {
+  saving.value = true
+  saved.value = false
+  await chrome.storage.local.set({
+    apiKey: apiKey.value,
+    baseUrl: baseUrl.value,
+    modelName: modelName.value,
+    githubToken: githubToken.value,
+  })
+  saving.value = false
+  saved.value = true
+  setTimeout(() => saved.value = false, 2000)
+}
+
+onMounted(loadSettings)
+</script>
+
 <template>
-  <div>SettingsModal — stub</div>
+  <div class="overlay" @click.self="$emit('close')">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>设置</h2>
+        <button class="close-btn" @click="$emit('close')">✕</button>
+      </div>
+      <div class="modal-body">
+        <label>
+          <span>API Key</span>
+          <input v-model="apiKey" type="password" placeholder="必填" />
+        </label>
+        <label>
+          <span>Base URL</span>
+          <input v-model="baseUrl" placeholder="https://open.bigmodel.cn/api/paas/v4" />
+        </label>
+        <label>
+          <span>模型名称</span>
+          <input v-model="modelName" placeholder="glm-4-flash" />
+        </label>
+        <label>
+          <span>GitHub Token（可选，私有仓库使用）</span>
+          <input v-model="githubToken" type="password" placeholder="选填" />
+        </label>
+        <p class="hint">支持任意 OpenAI 兼容格式的模型，切换模型只需修改 Base URL 和模型名称。</p>
+      </div>
+      <div class="modal-footer">
+        <span v-if="saved" class="saved-msg">已保存</span>
+        <button :disabled="saving" @click="save">{{ saving ? '保存中...' : '保存配置' }}</button>
+      </div>
+    </div>
+  </div>
 </template>
+
+<style scoped>
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.modal {
+  background: #fff;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 360px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+.modal-header h2 {
+  margin: 0;
+  font-size: 16px;
+}
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #6b7280;
+}
+.modal-body {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.modal-body label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.modal-body label span {
+  font-size: 12px;
+  color: #6b7280;
+}
+.modal-body input {
+  padding: 8px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 13px;
+  outline: none;
+}
+.modal-body input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+.hint {
+  font-size: 11px;
+  color: #9ca3af;
+  margin: 4px 0 0;
+  line-height: 1.4;
+}
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 12px 20px;
+  border-top: 1px solid #e5e7eb;
+}
+.modal-footer button {
+  padding: 8px 20px;
+  border: none;
+  border-radius: 6px;
+  background: #2563eb;
+  color: #fff;
+  cursor: pointer;
+  font-size: 13px;
+}
+.modal-footer button:disabled {
+  opacity: 0.5;
+}
+.saved-msg {
+  color: #16a34a;
+  font-size: 13px;
+}
+</style>

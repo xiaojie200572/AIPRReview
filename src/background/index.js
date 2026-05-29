@@ -2,13 +2,46 @@ import { parsePRUrl, getPRInfo, getPRFiles, getPRCommits } from './github.js'
 import { streamChat } from './llm.js'
 import { setCache, getCache, hasCache, clearCache } from './analysisCache.js'
 import { preprocessDiff } from './diffPreprocessor.js'
+import { enrichContext } from './contextEnricher.js'
+import { buildSystemPrompt } from '../sidepanel/prompts/base.js'
+import { walkthroughPrompt } from '../sidepanel/prompts/walkthrough.js'
+import { reviewPrompt } from '../sidepanel/prompts/review.js'
+import { discussPrompt, buildDiscussSystemPrompt } from '../sidepanel/prompts/discuss.js'
 
-const SYSTEM_PROMPT = '你是一位资深代码审查工程师。请对以下 PR 的代码变更进行审查，指出可能影响功能、性能、安全的问题，给出具体修改建议。'
+const MODE_PROMPTS = {
+  walkthrough: walkthroughPrompt,
+  review: reviewPrompt,
+  discuss: discussPrompt,
+}
 
 function buildUserMessage(prInfo, files, commits) {
   const { diffText } = preprocessDiff(files)
   const commitMessages = commits.map(c => `- ${c.sha.slice(0, 7)} ${c.message.split('\n')[0]}`).join('\n')
   return `## PR 信息\n标题: ${prInfo.title}\n作者: ${prInfo.author}\n描述: ${prInfo.body.slice(0, 1000)}\n\n## Commits\n${commitMessages}\n\n## 文件变更\n${diffText}`
+}
+
+async function buildSystemMessage(mode, prInfo, files, owner, repo, head) {
+  const modePrompt = MODE_PROMPTS[mode] || MODE_PROMPTS.walkthrough
+
+  if (mode === 'discuss') {
+    const cachedWalkthrough = getCache(`${prInfo.html_url || ''}:walkthrough`)
+    const cachedReview = getCache(`${prInfo.html_url || ''}:review`)
+    return buildDiscussSystemPrompt(
+      cachedWalkthrough?.result || '',
+      cachedReview?.result || ''
+    )
+  }
+
+  let system = buildSystemPrompt(modePrompt)
+
+  if (mode === 'review') {
+    const context = await enrichContext(files, owner, repo, head)
+    if (context) {
+      system += `\n\n${context}`
+    }
+  }
+
+  return system
 }
 
 async function handleAnalyzePR(port, payload) {
@@ -34,13 +67,14 @@ async function handleAnalyzePR(port, payload) {
 
     clearCache(prUrl)
 
-    const userMessage = buildUserMessage(prInfo, files, commits)
-
     port.postMessage({ type: 'STREAM_CHUNK', payload: { chunk: '正在分析代码变更...\n\n' } })
+
+    const systemContent = await buildSystemMessage(mode, prInfo, files, owner, repo, prInfo.head)
+    const userMessage = buildUserMessage(prInfo, files, commits)
 
     await streamChat({
       messages: [
-        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'system', content: systemContent },
         { role: 'user', content: userMessage },
       ],
       onChunk(chunk) {
