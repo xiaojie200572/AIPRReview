@@ -11,7 +11,7 @@ const emit = defineEmits(['analyze'])
 const url = ref(props.url)
 
 watch(() => props.url, (val) => {
-  if (val && !url.value) url.value = val
+  if (val) url.value = val
 })
 
 function submit() {
