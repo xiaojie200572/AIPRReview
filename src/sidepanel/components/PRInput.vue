@@ -1,14 +1,18 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 const props = defineProps({
   loading: Boolean,
-  mode: { type: String, default: 'walkthrough' },
+  url: { type: String, default: '' },
 })
 
-const emit = defineEmits(['analyze', 'update:mode'])
+const emit = defineEmits(['analyze'])
 
-const url = ref('')
+const url = ref(props.url)
+
+watch(() => props.url, (val) => {
+  if (val && !url.value) url.value = val
+})
 
 function submit() {
   if (!url.value.trim() || props.loading) return
