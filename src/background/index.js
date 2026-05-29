@@ -1,1 +1,2 @@
-// IPC 消息中枢 — stub
+export * from './github.js'
+export * from './llm.js'
