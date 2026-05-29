@@ -491,17 +491,51 @@ Background SW 和 Side Panel 之间的消息格式：
 
 ---
 
-## 开发顺序建议
+## 开发计划（6 个 PR）
 
-1. 先完成 `manifest.json` + `vite.config.js` 配置
-2. 实现 `github.js` 并测试 PR 数据获取
-3. 实现 `llm.js` 流式调用
-4. 实现 `diffPreprocessor.js`
-5. 实现 Background SW 的 IPC 消息中枢
-6. 实现 Side Panel 基础 UI（输入框 + 结果展示）
-7. 打通完整链路：输入 URL → 分析 → 流式展示
-8. 实现三模式 Prompt + ModeSelector
-9. 实现 `contextEnricher.js` + `analysisCache.js`
-10. 实现 Settings 配置弹窗
-11. 实现 Content Script 自动填入 URL
-12. 完善 README
+### PR 1 ✅ 已完成 — 目录重构 + 基础设施
+| 操作 | 说明 |
+|---|---|
+| 删除 | popup/、assets/、HelloWorld.vue、content/views/ |
+| 新建 | background/（6 个桩文件）、sidepanel/components/（4 个桩组件）、sidepanel/prompts/（4 个桩文件） |
+| 新建 | src/icons/ 占位图标 |
+| 更新 | manifest.config.js、README.md，安装 marked |
+
+### PR 2 — 数据层：GitHub API + LLM API
+- `src/background/github.js`：parsePRUrl / getPRInfo / getPRFiles / getPRCommits / getFileContent
+- `src/background/llm.js`：streamChat（SSE 流式，OpenAI 兼容格式）
+- 新增：`.env`（默认配置）、`.env.local`（dev API Key，不提交）
+- 更新：`vite.config.js` + `manifest.config.js` 支持 `loadEnv` 动态加载 host_permissions
+- 通信方案：暂不涉及 Port 连接，仅验证独立模块可用
+
+### PR 3 — Background 消息中枢 + 流式 Port 通信
+- `src/background/index.js`：IPC 消息中枢，监听 ANALYZE_PR / GET_SETTINGS
+- 流式通信：Side Panel ↔ Background 通过 `chrome.runtime.connect` 建立长连接 Port
+  - Port 保持 SW 存活，逐 chunk 推送 STREAM_CHUNK / STREAM_DONE / STREAM_ERROR
+- `src/background/analysisCache.js`：内存 Map 缓存
+
+### PR 4 — Side Panel 基础 UI + 完整链路
+- `PRInput.vue`：PR URL 输入框 + 分析按钮
+- `ResultPanel.vue`：Markdown 渲染 + 流式输出（marked）+ 加载动画
+- `ModeSelector.vue`：Walkthrough / Review / Discuss Tab 切换
+- `App.vue`：整体布局，串联 PRInput → Port 发起 ANALYZE_PR → ResultPanel 流式展示
+- `src/background/diffPreprocessor.js`：文件优先级排序、噪音过滤、Token 预算分配
+
+### PR 5 — 三模式 Prompt + 配置 + Context + cache
+- `prompts/base.js` / walkthrough.js / review.js / discuss.js：完整 System Prompt
+- `SettingsModal.vue`：API Key / Base URL / Model / GitHub Token 配置，`chrome.storage.local` 持久化
+- `src/background/contextEnricher.js`：高风险文件识别 + 完整函数体拉取
+- 新增：`chrome.storage.session` 暂存 PR URL，解决 SW 休眠后 URL 丢失
+
+### PR 6 — Content Script + 完善
+- `src/content/index.js`：自动检测 GitHub PR URL，监听 SPA 路由变化（pushState）
+- 写入 `chrome.storage.session`，Side Panel 启动时从中读取
+- 端到端验证 + README 最终润色
+
+### 关键架构决策
+
+1. **流式通信**：Port 长连接（`chrome.runtime.connect`）而非 sendMessage，保持 SW 存活并支持逐 chunk 推送
+2. **PR URL 传递**：`chrome.storage.session` 作为 Content Script → Side Panel 的中介，不受 SW 生命周期影响
+3. **环境变量 fallback**：`chrome.storage.local`（用户配置）→ VITE_DEV_API_KEY（开发用）→ 空（上线后无默认 Key）
+4. **host_permissions**：`manifest.config.js` 改为工厂函数，从 loadEnv 读取 VITE_API_HOSTS 动态生成
+5. **GitHub Token**：可选，存储于 `chrome.storage.local`，`github.js` 自动带 Authorization 头
