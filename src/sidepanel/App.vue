@@ -29,6 +29,10 @@ function onStreamError(payload) {
   loading.value = false
 }
 
+function onPRUrl(payload) {
+  savedUrl.value = payload.url
+}
+
 async function toggleTheme() {
   darkMode.value = !darkMode.value
   document.documentElement.setAttribute('data-theme', darkMode.value ? 'dark' : 'light')
@@ -41,13 +45,19 @@ async function analyze(prUrl) {
   loading.value = true
   savedUrl.value = prUrl
   await chrome.storage.session.set({ prUrl })
-  send('ANALYZE_PR', { prUrl, mode: mode.value })
+  try {
+    send('ANALYZE_PR', { prUrl, mode: mode.value })
+  } catch (err) {
+    errorMsg.value = err.message || String(err)
+    loading.value = false
+  }
 }
 
 onMounted(async () => {
   on('STREAM_CHUNK', onStreamChunk)
   on('STREAM_DONE', onStreamDone)
   on('STREAM_ERROR', onStreamError)
+  on('PR_URL', onPRUrl)
   const { prUrl } = await chrome.storage.session.get('prUrl')
   if (prUrl) savedUrl.value = prUrl
   const { darkMode: dm } = await chrome.storage.local.get('darkMode')
@@ -58,6 +68,7 @@ onUnmounted(() => {
   off('STREAM_CHUNK', onStreamChunk)
   off('STREAM_DONE', onStreamDone)
   off('STREAM_ERROR', onStreamError)
+  off('PR_URL', onPRUrl)
 })
 </script>
 

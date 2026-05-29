@@ -4,10 +4,9 @@ function getPRUrl() {
   return window.location.href.match(PR_URL_PATTERN)?.[0] || ''
 }
 
-async function updatePRUrl() {
+function updatePRUrl() {
   const url = getPRUrl()
   if (!url) return
-  await chrome.storage.session.set({ prUrl: url })
   chrome.runtime.sendMessage({ type: 'PR_URL_DETECTED', payload: { url } }).catch(() => {})
 }
 

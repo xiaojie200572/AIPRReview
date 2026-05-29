@@ -15,6 +15,7 @@ const MODE_PROMPTS = {
 }
 
 const activeStreams = new Map()
+const sidepanelPorts = new Set()
 
 function buildUserMessage(prInfo, files, commits) {
   const { diffText } = preprocessDiff(files)
@@ -156,11 +157,15 @@ async function handleSendMessage(port, payload) {
 chrome.runtime.onMessage.addListener((msg, sender) => {
   if (msg.type === 'PR_URL_DETECTED' && msg.payload?.url) {
     chrome.storage.session.set({ prUrl: msg.payload.url }).catch(() => {})
+    for (const p of sidepanelPorts) {
+      try { p.postMessage({ type: 'PR_URL', payload: { url: msg.payload.url } }) } catch {}
+    }
   }
 })
 
 chrome.runtime.onConnect.addListener((port) => {
   if (port.name !== 'sidepanel') return
+  sidepanelPorts.add(port)
 
   port.onMessage.addListener((msg) => {
     switch (msg.type) {
@@ -182,6 +187,7 @@ chrome.runtime.onConnect.addListener((port) => {
   })
 
   port.onDisconnect.addListener(() => {
+    sidepanelPorts.delete(port)
     const ac = activeStreams.get(port)
     if (ac) ac.abort()
     activeStreams.delete(port)
