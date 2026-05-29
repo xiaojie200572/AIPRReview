@@ -1,17 +1,14 @@
 import { parsePRUrl, getPRInfo, getPRFiles, getPRCommits } from './github.js'
 import { streamChat } from './llm.js'
 import { setCache, getCache, hasCache, clearCache } from './analysisCache.js'
+import { preprocessDiff } from './diffPreprocessor.js'
 
 const SYSTEM_PROMPT = '你是一位资深代码审查工程师。请对以下 PR 的代码变更进行审查，指出可能影响功能、性能、安全的问题，给出具体修改建议。'
 
 function buildUserMessage(prInfo, files, commits) {
-  const diffSummary = files.map(f =>
-    `File: ${f.filename} (${f.status}, +${f.additions}/-${f.deletions})\n\`\`\`diff\n${f.patch.slice(0, 3000)}\n\`\`\``
-  ).join('\n\n')
-
+  const { diffText } = preprocessDiff(files)
   const commitMessages = commits.map(c => `- ${c.sha.slice(0, 7)} ${c.message.split('\n')[0]}`).join('\n')
-
-  return `## PR 信息\n标题: ${prInfo.title}\n作者: ${prInfo.author}\n描述: ${prInfo.body.slice(0, 1000)}\n\n## Commits\n${commitMessages}\n\n## 文件变更\n${diffSummary}`
+  return `## PR 信息\n标题: ${prInfo.title}\n作者: ${prInfo.author}\n描述: ${prInfo.body.slice(0, 1000)}\n\n## Commits\n${commitMessages}\n\n## 文件变更\n${diffText}`
 }
 
 async function handleAnalyzePR(port, payload) {

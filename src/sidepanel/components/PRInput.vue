@@ -1,3 +1,70 @@
+<script setup>
+import { ref } from 'vue'
+
+const props = defineProps({
+  loading: Boolean,
+  mode: { type: String, default: 'walkthrough' },
+})
+
+const emit = defineEmits(['analyze', 'update:mode'])
+
+const url = ref('')
+
+function submit() {
+  if (!url.value.trim() || props.loading) return
+  emit('analyze', url.value.trim())
+}
+</script>
+
 <template>
-  <div>PRInput — stub</div>
+  <div class="pr-input">
+    <div class="input-row">
+      <input
+        v-model="url"
+        placeholder="https://github.com/owner/repo/pull/123"
+        :disabled="loading"
+        @keyup.enter="submit"
+      />
+      <button :disabled="loading || !url.trim()" @click="submit">
+        {{ loading ? '分析中...' : '分析' }}
+      </button>
+    </div>
+  </div>
 </template>
+
+<style scoped>
+.pr-input {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+.input-row {
+  display: flex;
+  gap: 8px;
+}
+.input-row input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 13px;
+  outline: none;
+}
+.input-row input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+.input-row button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #2563eb;
+  color: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.input-row button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+</style>
