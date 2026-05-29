@@ -8,11 +8,7 @@ export const discussPrompt = `
 - 回答要具体，直接针对用户的问题
 - 如果需要给出代码示例，请给出完整可运行的片段
 - 保持对话历史上下文，不要重复之前已经说过的结论
-
-## 回答限制
-- 你只回答与代码审查、PR 变更相关的问题
-- 如果用户的问题与当前 PR 变更、代码质量、架构设计、技术方案等无关，请直接回答："抱歉，该问题无法回答"
-- 例如：闲聊、其他项目的问题、非技术问题等，都拒绝回答`
+- 如果用户的问题超出当前 PR 范围，礼貌说明`
 
 export const buildDiscussSystemPrompt = (walkthroughResult, reviewResult) => {
   let contextSection = ''
