@@ -1,51 +1,47 @@
-# Vue 3 + Vite + CRXJS
+# AI PR Review Assistant
 
-This template helps you quickly start developing Chrome extensions with Vue 3 and Vite. It includes the CRXJS Vite plugin for seamless Chrome extension development.
+AI 辅助 GitHub PR 代码审查工具 — Chrome 浏览器插件。
 
-## Features
+## 功能介绍
 
-- Vue 3 with `<script setup>` syntax
-- Vite build tool
-- CRXJS Vite plugin integration
-- Chrome extension manifest configuration
+在 GitHub PR 页面以侧边栏（Side Panel）形式提供 AI 代码审查，无需离开当前页面即可获得分析结果。
 
-## Quick Start
+### 三种分析模式
 
-1. Install dependencies:
+- **Walkthrough** — PR 概览：TL;DR、变更模块、变更规模、Review 建议
+- **Review** — 深度代码审查：逐文件分析风险，标注 🔴🟡🟢 等级
+- **Discuss** — 对话式深入分析：基于前序结果追问
+
+### 模型支持
+
+默认使用智谱 GLM-4-Flash（免费），支持切换任意 OpenAI 兼容模型（DeepSeek、SiliconFlow、Ollama 本地等）。
+
+## 安装使用
 
 ```bash
 npm install
-```
-
-2. Start development server:
-
-```bash
 npm run dev
 ```
 
-3. Open Chrome and navigate to `chrome://extensions/`, enable "Developer mode", and load the unpacked extension from the `dist` directory.
+加载 `dist/` 目录到 Chrome 扩展管理页面（启用开发者模式）。
 
-4. Build for production:
+## 项目结构
 
-```bash
-npm run build
+```
+src/
+├── background/        # Service Worker：GitHub API、LLM API、diff 处理、缓存
+├── content/           # Content Script：自动读取 PR URL
+├── sidepanel/         # Side Panel UI：Vue 3 组件 + Prompt 模板
+└── icons/             # 扩展图标
 ```
 
-## Project Structure
+## 技术栈
 
-- `src/popup/` - Extension popup UI
-- `src/content/` - Content scripts
-- `manifest.config.js` - Chrome extension manifest configuration
+- Chrome Extension Manifest V3
+- Vue 3 + Vite
+- @crxjs/vite-plugin
+- marked（Markdown 渲染）
 
-## Documentation
+## 许可证
 
-- [Vue 3 Documentation](https://vuejs.org/)
-- [Vite Documentation](https://vitejs.dev/)
-- [CRXJS Documentation](https://crxjs.dev/vite-plugin)
-
-## Chrome Extension Development Notes
-
-- Use `manifest.config.js` to configure your extension
-- The CRXJS plugin automatically handles manifest generation
-- Content scripts should be placed in `src/content/`
-- Popup UI should be placed in `src/popup/`
+MIT

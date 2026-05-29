@@ -1,36 +1,35 @@
 <script setup>
-import HelloWorld from '@/components/HelloWorld.vue'
+// Side Panel 根组件 — 后续串联 PRInput / ModeSelector / ResultPanel / SettingsModal
 </script>
 
 <template>
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="@/assets/vite.svg" class="logo" alt="Vite logo">
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="@/assets/vue.svg" class="logo vue" alt="Vue logo">
-    </a>
-    <a href="https://crxjs.dev/vite-plugin" target="_blank">
-      <img src="@/assets/crx.svg" class="logo crx" alt="crx logo">
-    </a>
+  <div class="app">
+    <header class="app-header">
+      <h1>AI PR Review</h1>
+    </header>
+    <main class="app-body">
+      <p>准备就绪</p>
+    </main>
   </div>
-  <HelloWorld msg="Vite + Vue + CRXJS" />
 </template>
 
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+.app-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e5e7eb;
 }
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+.app-header h1 {
+  margin: 0;
+  font-size: 16px;
 }
-.logo.crx:hover {
-  filter: drop-shadow(0 0 2em #f2bae4aa);
+.app-body {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
 }
 </style>
