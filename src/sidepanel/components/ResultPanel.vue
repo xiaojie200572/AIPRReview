@@ -32,10 +32,11 @@ const rendered = computed(() => {
   flex: 1;
   padding: 16px;
   overflow-y: auto;
+  background: var(--bg-primary);
 }
 .error-box {
-  color: #dc2626;
-  background: #fef2f2;
+  color: var(--text-danger);
+  background: var(--bg-danger);
   padding: 12px;
   border-radius: 6px;
   white-space: pre-wrap;
@@ -47,14 +48,14 @@ const rendered = computed(() => {
   align-items: center;
   gap: 12px;
   margin-top: 40px;
-  color: #6b7280;
+  color: var(--text-secondary);
   font-size: 13px;
 }
 .spinner {
   width: 24px;
   height: 24px;
-  border: 3px solid #e5e7eb;
-  border-top-color: #2563eb;
+  border: 3px solid var(--spinner-track);
+  border-top-color: var(--spinner-active);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -67,14 +68,14 @@ const rendered = computed(() => {
   word-break: break-word;
 }
 .markdown-body :deep(pre) {
-  background: #f3f4f6;
+  background: var(--bg-code);
   padding: 12px;
   border-radius: 6px;
   overflow-x: auto;
   font-size: 12px;
 }
 .markdown-body :deep(code) {
-  background: #f3f4f6;
+  background: var(--bg-code);
   padding: 2px 4px;
   border-radius: 3px;
   font-size: 12px;
@@ -86,12 +87,12 @@ const rendered = computed(() => {
 .markdown-body :deep(h1) { font-size: 18px; margin: 16px 0 8px; }
 .markdown-body :deep(h2) { font-size: 16px; margin: 14px 0 6px; }
 .markdown-body :deep(h3) { font-size: 14px; margin: 12px 0 4px; }
-.markdown-body :deep(hr) { margin: 16px 0; border: none; border-top: 1px solid #e5e7eb; }
+.markdown-body :deep(hr) { margin: 16px 0; border: none; border-top: 1px solid var(--border-secondary); }
 .markdown-body :deep(blockquote) {
   margin: 8px 0;
   padding: 4px 12px;
-  border-left: 3px solid #2563eb;
-  background: #f9fafb;
+  border-left: 3px solid var(--accent);
+  background: var(--bg-blockquote);
   border-radius: 0 4px 4px 0;
 }
 .markdown-body :deep(table) {
@@ -101,12 +102,12 @@ const rendered = computed(() => {
   font-size: 12px;
 }
 .markdown-body :deep(th), :deep(td) {
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-secondary);
   padding: 6px 8px;
   text-align: left;
 }
 .markdown-body :deep(th) {
-  background: #f9fafb;
+  background: var(--bg-secondary);
   font-weight: 600;
 }
 .markdown-body :deep(ul), :deep(ol) {

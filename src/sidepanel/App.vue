@@ -70,13 +70,15 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  background: var(--bg-primary);
+  color: var(--text-primary);
 }
 .app-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 12px 16px;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border-secondary);
 }
 .app-header h1 {
   margin: 0;
@@ -85,11 +87,12 @@ onUnmounted(() => {
 }
 .btn-icon {
   background: none;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-primary);
   border-radius: 6px;
   padding: 4px 8px;
   cursor: pointer;
   font-size: 16px;
   line-height: 1;
+  color: var(--text-primary);
 }
 </style>
