@@ -1,0 +1,20 @@
+{
+  "name": "pr-review-extension",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "vue": "^3.5.30"
+  },
+  "devDependencies": {
+    "@crxjs/vite-plugin": "^2.4.0",
+    "@types/chrome": "^0.1.37",
+    "@vitejs/plugin-vue": "^6.0.5",
+    "vite": "^8.0.0",
+    "vite-plugin-zip-pack": "^1.2.4"
+  }
+}
