@@ -73,14 +73,14 @@ onMounted(loadSettings)
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: var(--bg-overlay);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 100;
 }
 .modal {
-  background: #fff;
+  background: var(--bg-modal);
   border-radius: 12px;
   width: 90%;
   max-width: 360px;
@@ -91,18 +91,19 @@ onMounted(loadSettings)
   align-items: center;
   justify-content: space-between;
   padding: 16px 20px;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border-secondary);
 }
 .modal-header h2 {
   margin: 0;
   font-size: 16px;
+  color: var(--text-primary);
 }
 .close-btn {
   background: none;
   border: none;
   font-size: 18px;
   cursor: pointer;
-  color: #6b7280;
+  color: var(--text-secondary);
 }
 .modal-body {
   padding: 16px 20px;
@@ -117,22 +118,24 @@ onMounted(loadSettings)
 }
 .modal-body label span {
   font-size: 12px;
-  color: #6b7280;
+  color: var(--text-secondary);
 }
 .modal-body input {
   padding: 8px 10px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-primary);
   border-radius: 6px;
   font-size: 13px;
   outline: none;
+  color: var(--text-primary);
+  background: var(--bg-primary);
 }
 .modal-body input:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-focus);
 }
 .hint {
   font-size: 11px;
-  color: #9ca3af;
+  color: var(--text-tertiary);
   margin: 4px 0 0;
   line-height: 1.4;
 }
@@ -142,13 +145,13 @@ onMounted(loadSettings)
   justify-content: flex-end;
   gap: 12px;
   padding: 12px 20px;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--border-secondary);
 }
 .modal-footer button {
   padding: 8px 20px;
   border: none;
   border-radius: 6px;
-  background: #2563eb;
+  background: var(--accent);
   color: #fff;
   cursor: pointer;
   font-size: 13px;
@@ -157,7 +160,7 @@ onMounted(loadSettings)
   opacity: 0.5;
 }
 .saved-msg {
-  color: #16a34a;
+  color: var(--text-success);
   font-size: 13px;
 }
 </style>

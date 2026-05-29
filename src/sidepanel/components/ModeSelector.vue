@@ -34,7 +34,8 @@ function select(mode) {
 <style scoped>
 .mode-selector {
   display: flex;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border-secondary);
+  background: var(--bg-primary);
 }
 .tab {
   flex: 1;
@@ -43,16 +44,16 @@ function select(mode) {
   background: none;
   font-size: 13px;
   cursor: pointer;
-  color: #6b7280;
+  color: var(--text-secondary);
   border-bottom: 2px solid transparent;
   transition: all 0.15s;
 }
 .tab:hover {
-  color: #374151;
+  color: var(--text-primary);
 }
 .tab.active {
-  color: #2563eb;
-  border-bottom-color: #2563eb;
+  color: var(--accent);
+  border-bottom-color: var(--accent);
   font-weight: 600;
 }
 .tab:disabled {

@@ -31,7 +31,7 @@ function parseSSE(chunk) {
   return results
 }
 
-export async function streamChat({ messages, onChunk, onDone, onError }) {
+export async function streamChat({ messages, onChunk, onDone, onError, signal }) {
   try {
     const { apiKey, baseUrl, model } = await getConfig()
     if (!apiKey) {
@@ -49,6 +49,7 @@ export async function streamChat({ messages, onChunk, onDone, onError }) {
         messages,
         stream: true,
       }),
+      signal,
     })
 
     if (!res.ok) {
