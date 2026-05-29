@@ -31,7 +31,7 @@ function parseSSE(chunk) {
   return results
 }
 
-export async function streamChat({ messages, onChunk, onDone, onError }) {
+export async function streamChat({ messages, onChunk, onDone, onError, signal }) {
   try {
     const { apiKey, baseUrl, model } = await getConfig()
     if (!apiKey) {
@@ -49,6 +49,7 @@ export async function streamChat({ messages, onChunk, onDone, onError }) {
         messages,
         stream: true,
       }),
+      signal,
     })
 
     if (!res.ok) {
@@ -60,34 +61,64 @@ export async function streamChat({ messages, onChunk, onDone, onError }) {
     const decoder = new TextDecoder()
     let fullText = ''
     let buffer = ''
+    let aborted = false
 
-    while (true) {
-      const { done, value } = await reader.read()
-      if (done) break
+    let abortResolve
+    const abortPromise = new Promise(r => { abortResolve = r })
 
-      buffer += decoder.decode(value, { stream: true })
-      const parts = buffer.split('\n\n')
-      buffer = parts.pop() || ''
+    function onAbort() {
+      aborted = true
+      abortResolve({ done: true, value: undefined })
+      try { reader.cancel() } catch {}
+    }
 
-      for (const part of parts) {
-        const tokens = parseSSE(part)
+    if (signal) {
+      if (signal.aborted) {
+        aborted = true
+      } else {
+        signal.addEventListener('abort', onAbort, { once: true })
+      }
+    }
+
+    try {
+      while (true) {
+        if (aborted) break
+        const result = await Promise.race([reader.read(), abortPromise])
+        const { done, value } = result
+        if (done) break
+
+        buffer += decoder.decode(value, { stream: true })
+        const parts = buffer.split('\n\n')
+        buffer = parts.pop() || ''
+
+        for (const part of parts) {
+          const tokens = parseSSE(part)
+          for (const token of tokens) {
+            fullText += token
+            onChunk(token)
+          }
+        }
+      }
+
+      if (!aborted && buffer.trim()) {
+        const tokens = parseSSE(buffer)
         for (const token of tokens) {
           fullText += token
           onChunk(token)
         }
       }
-    }
 
-    if (buffer.trim()) {
-      const tokens = parseSSE(buffer)
-      for (const token of tokens) {
-        fullText += token
-        onChunk(token)
+      if (!aborted) {
+        onDone(fullText)
       }
+    } finally {
+      signal?.removeEventListener('abort', onAbort)
     }
-
-    onDone(fullText)
   } catch (err) {
-    onError(err.message || String(err))
+    if (err.name === 'AbortError') {
+      onError('已取消')
+    } else {
+      onError(err.message || String(err))
+    }
   }
 }
