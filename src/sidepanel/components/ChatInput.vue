@@ -1,5 +1,6 @@
 ﻿<script setup>
 import { ref } from 'vue'
+import { t } from '../../shared/i18n/index.js'
 
 const props = defineProps({
   disabled: Boolean,
@@ -21,7 +22,7 @@ function submit() {
   <div class="chat-input">
     <input
       v-model="text"
-      placeholder="输入您的问题..."
+      :placeholder="t('chatInput.placeholder')"
       :disabled="disabled"
       @keyup.enter="submit"
     />
@@ -30,13 +31,13 @@ function submit() {
       :disabled="!text.trim()"
       @click="submit"
     >
-      发送    </button>
+      {{ t('chatInput.send') }}    </button>
     <button
       v-else
       class="btn-cancel"
       @click="$emit('cancel')"
     >
-      × 停止
+      × {{ t('prInput.cancel') }}
     </button>
   </div>
 </template>

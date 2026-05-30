@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { send, on, off } from './port.js'
+import { t } from '../shared/i18n/index.js'
 import PRInput from './components/PRInput.vue'
 import ModeSelector from './components/ModeSelector.vue'
 import ResultPanel from './components/ResultPanel.vue'
@@ -269,10 +270,10 @@ onUnmounted(() => {
 <template>
   <div class="app">
     <header class="app-header">
-      <h1>AI PR Review</h1>
+      <h1>{{ t('app.title') }}</h1>
       <div class="header-actions">
-        <button class="btn-icon" @click="toggleTheme" :title="darkMode ? '切换浅色模式' : '切换黑夜模式'">{{ darkMode ? '☀' : '☾' }}</button>
-        <button class="btn-icon" @click="showSettings = true" title="设置">⚙</button>
+        <button class="btn-icon" @click="toggleTheme" :title="darkMode ? t('app.toggleThemeLight') : t('app.toggleTheme')">{{ darkMode ? '☀' : '☾' }}</button>
+        <button class="btn-icon" @click="showSettings = true" :title="t('app.settings')">⚙</button>
       </div>
     </header>
     <PRInput

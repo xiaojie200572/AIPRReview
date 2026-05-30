@@ -1,5 +1,6 @@
 <script setup>
 import { ref, watch, computed } from 'vue'
+import { t } from '../../shared/i18n/index.js'
 
 const props = defineProps({
   buttonState: { type: String, default: 'analyze' },
@@ -19,9 +20,9 @@ watch(() => props.url, (val) => {
 
 const label = computed(() => {
   switch (props.buttonState) {
-    case 'loading': return '× 取消'
-    case 'export': return '导出'
-    default: return '分析'
+    case 'loading': return '× ' + t('prInput.cancel')
+    case 'export': return t('prInput.export')
+    default: return t('prInput.analyze')
   }
 })
 
@@ -56,7 +57,7 @@ function handleClick() {
     <div class="input-row">
       <input
         v-model="url"
-        placeholder="https://github.com/owner/repo/pull/123"
+        :placeholder="t('prInput.placeholder')"
         :disabled="buttonState === 'loading'"
         @keyup.enter="buttonState === 'analyze' && url.trim() && emit('analyze', url.trim())"
       />

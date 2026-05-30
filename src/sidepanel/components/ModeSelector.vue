@@ -1,4 +1,6 @@
 <script setup>
+import { t } from '../../shared/i18n/index.js'
+
 defineProps({
   modelValue: { type: String, default: 'walkthrough' },
   disabled: Boolean,
@@ -7,9 +9,9 @@ defineProps({
 const emit = defineEmits(['update:modelValue'])
 
 const modes = [
-  { value: 'walkthrough', label: 'Walkthrough' },
-  { value: 'review', label: 'Review' },
-  { value: 'discuss', label: 'Discuss' },
+  { value: 'walkthrough', label: () => t('modeSelector.walkthrough') },
+  { value: 'review', label: () => t('modeSelector.review') },
+  { value: 'discuss', label: () => t('modeSelector.discuss') },
 ]
 
 function select(mode) {
@@ -26,7 +28,7 @@ function select(mode) {
       :disabled="disabled"
       @click="select(m.value)"
     >
-      {{ m.label }}
+      {{ m.label() }}
     </button>
   </div>
 </template>

@@ -1,0 +1,45 @@
+{
+  "app": {
+    "title": "AI PR Review",
+    "toggleTheme": "切换黑夜模式",
+    "toggleThemeLight": "切换浅色模式",
+    "settings": "设置"
+  },
+  "prInput": {
+    "placeholder": "https://github.com/owner/repo/pull/123",
+    "analyze": "分析",
+    "export": "导出",
+    "cancel": "取消"
+  },
+  "modeSelector": {
+    "walkthrough": "Walkthrough",
+    "review": "Review",
+    "discuss": "Discuss"
+  },
+  "resultPanel": {
+    "loading": "分析中...",
+    "error": "分析出错",
+    "noResult": "请先输入 PR URL 并点击分析"
+  },
+  "chatInput": {
+    "placeholder": "输入你的问题...",
+    "send": "发送",
+    "you": "你"
+  },
+  "settings": {
+    "title": "设置",
+    "apiKey": "API Key",
+    "apiKeyPlaceholder": "必填",
+    "baseUrl": "Base URL",
+    "baseUrlPlaceholder": "https://open.bigmodel.cn/api/paas/v4",
+    "modelName": "模型名称",
+    "modelNamePlaceholder": "glm-4-flash",
+    "githubToken": "GitHub Token（可选，私有仓库使用）",
+    "githubTokenPlaceholder": "选填",
+    "hint": "支持任意 OpenAI 兼容格式的模型，切换模型只需修改 Base URL 和模型名称。",
+    "language": "语言 / Language",
+    "saved": "已保存",
+    "save": "保存配置",
+    "saving": "保存中..."
+  }
+}
