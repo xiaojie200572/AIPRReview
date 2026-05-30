@@ -8,7 +8,9 @@
     "build": "if exist dist rmdir /s /q dist & vite build & powershell -ExecutionPolicy Bypass -NoProfile -File scripts\\fix-build.ps1"
   },
   "dependencies": {
+    "highlight.js": "^11.11.1",
     "marked": "^18.0.4",
+    "marked-highlight": "^2.2.4",
     "vue": "^3.5.30"
   },
   "devDependencies": {

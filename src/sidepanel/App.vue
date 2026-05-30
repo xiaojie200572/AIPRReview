@@ -276,13 +276,15 @@ onUnmounted(() => {
       @export="handleExport"
       @cancel="cancelStream"
     />
-    <ModeSelector v-model="mode" :disabled="loading && mode !== 'discuss'" />
-    <ResultPanel
-      :content="content"
-      :loading="loading"
-      :error="errorMsg"
-      :messages="messages"
-    />
+    <div class="card">
+      <ModeSelector v-model="mode" :disabled="loading && mode !== 'discuss'" />
+      <ResultPanel
+        :content="content"
+        :loading="loading"
+        :error="errorMsg"
+        :messages="messages"
+      />
+    </div>
     <ChatInput
       v-if="mode === 'discuss'"
       :disabled="loading"
@@ -326,5 +328,15 @@ onUnmounted(() => {
   font-size: 16px;
   line-height: 1;
   color: var(--text-primary);
+}
+.card {
+  margin: 0 12px 12px;
+  border-radius: 10px;
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 </style>
