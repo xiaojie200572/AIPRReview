@@ -1,18 +1,3 @@
-const DEFAULTS = {
-  baseUrl: import.meta.env.VITE_DEFAULT_BASE_URL || 'https://open.bigmodel.cn/api/paas/v4',
-  model: import.meta.env.VITE_DEFAULT_MODEL || 'glm-4-flash',
-}
-
-async function getConfig() {
-  const stored = await chrome.storage.local.get(['apiKey', 'baseUrl', 'modelName'])
-  const apiKey = stored.apiKey || import.meta.env.VITE_DEV_API_KEY || ''
-  return {
-    apiKey,
-    baseUrl: (stored.baseUrl || DEFAULTS.baseUrl).replace(/\/+$/, ''),
-    model: stored.modelName || DEFAULTS.model,
-  }
-}
-
 function parseSSE(chunk) {
   const lines = chunk.split('\n')
   const results = []
@@ -31,9 +16,8 @@ function parseSSE(chunk) {
   return results
 }
 
-export async function streamChat({ messages, onChunk, onDone, onError, signal }) {
+export async function streamChat({ apiKey, baseUrl, model, messages, onChunk, onDone, onError, signal }) {
   try {
-    const { apiKey, baseUrl, model } = await getConfig()
     if (!apiKey) {
       throw new Error('API Key 未配置，请在设置中填写')
     }
