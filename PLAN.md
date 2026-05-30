@@ -437,17 +437,6 @@ Background SW 和 Side Panel 之间的消息格式：
 
 ---
 
-## README.md 设计说明（必须包含以下内容）
-
-```markdown
-# AI PR Review Assistant
-
-## 功能介绍
-...
-
-## 安装使用
-...
-
 ## 设计说明
 
 ### 模型选择
@@ -491,46 +480,6 @@ Background SW 和 Side Panel 之间的消息格式：
 
 ---
 
-## 开发计划（6 个 PR）
-
-### PR 1 ✅ 已完成 — 目录重构 + 基础设施
-| 操作 | 说明 |
-|---|---|
-| 删除 | popup/、assets/、HelloWorld.vue、content/views/ |
-| 新建 | background/（6 个桩文件）、sidepanel/components/（4 个桩组件）、sidepanel/prompts/（4 个桩文件） |
-| 新建 | src/icons/ 占位图标 |
-| 更新 | manifest.config.js、README.md，安装 marked |
-
-### PR 2 — 数据层：GitHub API + LLM API
-- `src/background/github.js`：parsePRUrl / getPRInfo / getPRFiles / getPRCommits / getFileContent
-- `src/background/llm.js`：streamChat（SSE 流式，OpenAI 兼容格式）
-- 新增：`.env`（默认配置）、`.env.local`（dev API Key，不提交）
-- 更新：`vite.config.js` + `manifest.config.js` 支持 `loadEnv` 动态加载 host_permissions
-- 通信方案：暂不涉及 Port 连接，仅验证独立模块可用
-
-### PR 3 — Background 消息中枢 + 流式 Port 通信
-- `src/background/index.js`：IPC 消息中枢，监听 ANALYZE_PR / GET_SETTINGS
-- 流式通信：Side Panel ↔ Background 通过 `chrome.runtime.connect` 建立长连接 Port
-  - Port 保持 SW 存活，逐 chunk 推送 STREAM_CHUNK / STREAM_DONE / STREAM_ERROR
-- `src/background/analysisCache.js`：内存 Map 缓存
-
-### PR 4 — Side Panel 基础 UI + 完整链路
-- `PRInput.vue`：PR URL 输入框 + 分析按钮
-- `ResultPanel.vue`：Markdown 渲染 + 流式输出（marked）+ 加载动画
-- `ModeSelector.vue`：Walkthrough / Review / Discuss Tab 切换
-- `App.vue`：整体布局，串联 PRInput → Port 发起 ANALYZE_PR → ResultPanel 流式展示
-- `src/background/diffPreprocessor.js`：文件优先级排序、噪音过滤、Token 预算分配
-
-### PR 5 — 三模式 Prompt + 配置 + Context + cache
-- `prompts/base.js` / walkthrough.js / review.js / discuss.js：完整 System Prompt
-- `SettingsModal.vue`：API Key / Base URL / Model / GitHub Token 配置，`chrome.storage.local` 持久化
-- `src/background/contextEnricher.js`：高风险文件识别 + 完整函数体拉取
-- 新增：`chrome.storage.session` 暂存 PR URL，解决 SW 休眠后 URL 丢失
-
-### PR 6 — Content Script + 完善
-- `src/content/index.js`：自动检测 GitHub PR URL，监听 SPA 路由变化（pushState）
-- 写入 `chrome.storage.session`，Side Panel 启动时从中读取
-- 端到端验证 + README 最终润色
 
 ### 关键架构决策
 
