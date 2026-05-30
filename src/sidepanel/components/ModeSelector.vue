@@ -18,7 +18,7 @@ function select(mode) {
 </script>
 
 <template>
-  <div class="mode-selector">
+  <div class="card-tabs">
     <button
       v-for="m in modes"
       :key="m.value"
@@ -32,10 +32,11 @@ function select(mode) {
 </template>
 
 <style scoped>
-.mode-selector {
+.card-tabs {
   display: flex;
+  background: var(--tab-bar-bg);
   border-bottom: 1px solid var(--border-secondary);
-  background: var(--bg-primary);
+  flex-shrink: 0;
 }
 .tab {
   flex: 1;
@@ -45,16 +46,28 @@ function select(mode) {
   font-size: 13px;
   cursor: pointer;
   color: var(--text-secondary);
-  border-bottom: 2px solid transparent;
-  transition: all 0.15s;
+  transition: background 0.15s;
+  position: relative;
 }
 .tab:hover {
+  background: var(--tab-hover-bg);
   color: var(--text-primary);
 }
 .tab.active {
-  color: var(--accent);
-  border-bottom-color: var(--accent);
+  background: var(--tab-active-bg);
+  color: var(--text-primary);
   font-weight: 600;
+}
+.tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--accent);
 }
 .tab:disabled {
   opacity: 0.5;

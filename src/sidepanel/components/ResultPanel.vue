@@ -1,6 +1,56 @@
 <script setup>
 import { computed } from 'vue'
 import { marked } from 'marked'
+import { markedHighlight } from 'marked-highlight'
+import hljs from 'highlight.js/lib/core'
+
+import javascript from 'highlight.js/lib/languages/javascript'
+import typescript from 'highlight.js/lib/languages/typescript'
+import bash from 'highlight.js/lib/languages/bash'
+import python from 'highlight.js/lib/languages/python'
+import json from 'highlight.js/lib/languages/json'
+import yaml from 'highlight.js/lib/languages/yaml'
+import diff from 'highlight.js/lib/languages/diff'
+import xml from 'highlight.js/lib/languages/xml'
+import css from 'highlight.js/lib/languages/css'
+
+hljs.registerLanguage('javascript', javascript)
+hljs.registerLanguage('js', javascript)
+hljs.registerLanguage('typescript', typescript)
+hljs.registerLanguage('ts', typescript)
+hljs.registerLanguage('bash', bash)
+hljs.registerLanguage('sh', bash)
+hljs.registerLanguage('python', python)
+hljs.registerLanguage('json', json)
+hljs.registerLanguage('yaml', yaml)
+hljs.registerLanguage('yml', yaml)
+hljs.registerLanguage('diff', diff)
+hljs.registerLanguage('html', xml)
+hljs.registerLanguage('css', css)
+
+marked.use(markedHighlight({
+  langPrefix: 'hljs language-',
+  highlight(code, lang) {
+    if (lang && hljs.getLanguage(lang)) {
+      return hljs.highlight(code, { language: lang }).value
+    }
+    return hljs.highlightAuto(code).value
+  },
+}))
+
+const inlineRenderer = {
+  codespan({ text }) {
+    if (text.includes('/') || text.includes('\\')) {
+      return `<code class="hl-path">${text}</code>`
+    }
+    if (text.startsWith('@')) {
+      return `<code class="hl-module">${text}</code>`
+    }
+    return `<code>${text}</code>`
+  },
+}
+
+marked.use({ renderer: inlineRenderer })
 
 const props = defineProps({
   content: { type: String, default: '' },
@@ -239,4 +289,53 @@ function renderMd(text) {
 .markdown-body :deep(li) {
   margin: 2px 0;
 }
+
+/* Syntax highlighting */
+.msg-body :deep(code.hl-path),
+.markdown-body :deep(code.hl-path) {
+  color: var(--syntax-path);
+  font-weight: 500;
+}
+.msg-body :deep(code.hl-module),
+.markdown-body :deep(code.hl-module) {
+  color: var(--syntax-module);
+  font-weight: 500;
+}
+.msg-body :deep(pre code.hljs),
+.markdown-body :deep(pre code.hljs) {
+  display: block;
+  overflow-x: auto;
+  padding: 12px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  background: var(--bg-code);
+  border-radius: 6px;
+}
+.msg-body :deep(.hljs-keyword),
+.markdown-body :deep(.hljs-keyword) { color: var(--syntax-keyword); }
+.msg-body :deep(.hljs-string),
+.markdown-body :deep(.hljs-string) { color: var(--syntax-string); }
+.msg-body :deep(.hljs-title),
+.markdown-body :deep(.hljs-title) { color: var(--syntax-function); }
+.msg-body :deep(.hljs-title.function_),
+.markdown-body :deep(.hljs-title.function_) { color: var(--syntax-function); }
+.msg-body :deep(.hljs-number),
+.markdown-body :deep(.hljs-number) { color: var(--syntax-constant); }
+.msg-body :deep(.hljs-built_in),
+.markdown-body :deep(.hljs-built_in) { color: var(--syntax-constant); }
+.msg-body :deep(.hljs-literal),
+.markdown-body :deep(.hljs-literal) { color: var(--syntax-constant); }
+.msg-body :deep(.hljs-comment),
+.markdown-body :deep(.hljs-comment) { color: var(--text-tertiary); font-style: italic; }
+.msg-body :deep(.hljs-attr),
+.markdown-body :deep(.hljs-attr) { color: var(--syntax-function); }
+.msg-body :deep(.hljs-attribute),
+.markdown-body :deep(.hljs-attribute) { color: var(--syntax-function); }
+.msg-body :deep(.hljs-selector-class),
+.markdown-body :deep(.hljs-selector-class) { color: var(--syntax-module); }
+.msg-body :deep(.hljs-selector-tag),
+.markdown-body :deep(.hljs-selector-tag) { color: var(--syntax-keyword); }
+.msg-body :deep(.hljs-meta),
+.markdown-body :deep(.hljs-meta) { color: var(--syntax-constant); }
 </style>

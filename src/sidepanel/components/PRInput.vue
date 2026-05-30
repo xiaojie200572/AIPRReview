@@ -109,15 +109,15 @@ function handleClick() {
   cursor: not-allowed;
 }
 .btn-export {
-  background: #059669;
+  background: var(--syntax-path);
 }
 .btn-export:hover:not(:disabled) {
-  background: #047857;
+  filter: brightness(0.9);
 }
 .btn-cancel {
-  background: #dc2626;
+  background: var(--text-danger);
 }
 .btn-cancel:hover:not(:disabled) {
-  background: #b91c1c;
+  filter: brightness(0.9);
 }
 </style>

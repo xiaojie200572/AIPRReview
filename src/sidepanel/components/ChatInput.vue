@@ -78,9 +78,9 @@ function submit() {
   cursor: not-allowed;
 }
 .btn-cancel {
-  background: #dc2626;
+  background: var(--text-danger);
 }
 .btn-cancel:hover:not(:disabled) {
-  background: #b91c1c;
+  filter: brightness(0.9);
 }
 </style>

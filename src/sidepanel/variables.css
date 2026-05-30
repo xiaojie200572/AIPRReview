@@ -28,6 +28,21 @@
   /* Spinner */
   --spinner-track: #e5e7eb;
   --spinner-active: #0969da;
+
+  /* Card */
+  --card-bg: #ffffff;
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --tab-bar-bg: #f6f8fa;
+  --tab-hover-bg: #e8ecf0;
+  --tab-active-bg: #ffffff;
+
+  /* Syntax highlighting */
+  --syntax-path: #1a7f37;
+  --syntax-module: #0969da;
+  --syntax-keyword: #cf222e;
+  --syntax-string: #0a3069;
+  --syntax-function: #8250df;
+  --syntax-constant: #0550ae;
 }
 
 [data-theme="dark"] {
@@ -55,6 +70,21 @@
 
   --spinner-track: #30363d;
   --spinner-active: #58a6ff;
+
+  /* Card */
+  --card-bg: #161b22;
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --tab-bar-bg: #21262d;
+  --tab-hover-bg: #30363d;
+  --tab-active-bg: #161b22;
+
+  /* Syntax highlighting */
+  --syntax-path: #7ee787;
+  --syntax-module: #79c0ff;
+  --syntax-keyword: #ff7b72;
+  --syntax-string: #a5d6ff;
+  --syntax-function: #d2a8ff;
+  --syntax-constant: #79c0ff;
 }
 
 /* Toggle switch */
