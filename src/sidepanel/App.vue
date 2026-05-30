@@ -339,7 +339,7 @@ onUnmounted(() => {
   color: var(--text-primary);
 }
 .card {
-  margin: 0 12px 12px;
+  margin: 8px 12px 12px;
   border-radius: 10px;
   background: var(--card-bg);
   border: 1px solid var(--border-primary);
