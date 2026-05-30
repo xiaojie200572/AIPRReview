@@ -37,6 +37,7 @@ export async function getPRInfo(owner, repo, prNumber) {
     head: data.head?.ref || '',
     headSha: data.head?.sha || '',
     createdAt: data.created_at,
+    html_url: data.html_url,
   }
 }
 
