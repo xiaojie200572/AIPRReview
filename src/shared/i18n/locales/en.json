@@ -1,0 +1,45 @@
+{
+  "app": {
+    "title": "AI PR Review",
+    "toggleTheme": "Switch to dark mode",
+    "toggleThemeLight": "Switch to light mode",
+    "settings": "Settings"
+  },
+  "prInput": {
+    "placeholder": "https://github.com/owner/repo/pull/123",
+    "analyze": "Analyze",
+    "export": "Export",
+    "cancel": "Cancel"
+  },
+  "modeSelector": {
+    "walkthrough": "Walkthrough",
+    "review": "Review",
+    "discuss": "Discuss"
+  },
+  "resultPanel": {
+    "loading": "Analyzing...",
+    "error": "Analysis failed",
+    "noResult": "Enter a PR URL and click Analyze"
+  },
+  "chatInput": {
+    "placeholder": "Ask a question...",
+    "send": "Send",
+    "you": "You"
+  },
+  "settings": {
+    "title": "Settings",
+    "apiKey": "API Key",
+    "apiKeyPlaceholder": "Required",
+    "baseUrl": "Base URL",
+    "baseUrlPlaceholder": "https://open.bigmodel.cn/api/paas/v4",
+    "modelName": "Model",
+    "modelNamePlaceholder": "glm-4-flash",
+    "githubToken": "GitHub Token (optional, for private repos)",
+    "githubTokenPlaceholder": "Optional",
+    "hint": "Supports any OpenAI-compatible model. Change the Base URL and model name to switch.",
+    "language": "语言 / Language",
+    "saved": "Saved",
+    "save": "Save",
+    "saving": "Saving..."
+  }
+}

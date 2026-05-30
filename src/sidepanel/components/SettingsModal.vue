@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { t, setLocale, initLocale } from '../../shared/i18n/index.js'
 
 const emit = defineEmits(['close'])
 
@@ -24,6 +25,7 @@ const apiKey = ref('')
 const baseUrl = ref('')
 const modelName = ref('')
 const githubToken = ref('')
+const locale = ref('zh')
 const saving = ref(false)
 const saved = ref(false)
 const showBaseUrlDropdown = ref(false)
@@ -53,11 +55,20 @@ const filteredModels = computed(() => {
 })
 
 async function loadSettings() {
-  const settings = await chrome.storage.local.get(['apiKey', 'baseUrl', 'modelName', 'githubToken'])
-  apiKey.value = settings.apiKey || ''
-  baseUrl.value = settings.baseUrl || 'https://open.bigmodel.cn/api/paas/v4'
-  modelName.value = settings.modelName || 'glm-4-flash'
-  githubToken.value = settings.githubToken || ''
+  const [{ apiKey: key, baseUrl: url, modelName: model, githubToken: token }, { locale: loc }] = await Promise.all([
+    chrome.storage.local.get(['apiKey', 'baseUrl', 'modelName', 'githubToken']),
+    chrome.storage.local.get('locale'),
+  ])
+  apiKey.value = key || ''
+  baseUrl.value = url || 'https://open.bigmodel.cn/api/paas/v4'
+  modelName.value = model || 'glm-4-flash'
+  githubToken.value = token || ''
+  locale.value = loc || 'zh'
+}
+
+async function handleSetLocale(lang) {
+  locale.value = lang
+  await setLocale(lang)
 }
 
 async function save() {
@@ -95,21 +106,21 @@ onMounted(loadSettings)
   <div class="overlay" @click.self="$emit('close')">
     <div class="modal">
       <div class="modal-header">
-        <h2>设置</h2>
+        <h2>{{ t('settings.title') }}</h2>
         <button class="close-btn" @click="$emit('close')">✕</button>
       </div>
       <div class="modal-body">
         <label>
-          <span>API Key</span>
-          <input v-model="apiKey" type="password" placeholder="必填" />
+          <span>{{ t('settings.apiKey') }}</span>
+          <input v-model="apiKey" type="password" :placeholder="t('settings.apiKeyPlaceholder')" />
         </label>
 
         <label>
-          <span>Base URL</span>
+          <span>{{ t('settings.baseUrl') }}</span>
           <div class="autocomplete">
             <input
               v-model="baseUrl"
-              placeholder="https://open.bigmodel.cn/api/paas/v4"
+              :placeholder="t('settings.baseUrlPlaceholder')"
               @focus="showBaseUrlDropdown = true"
               @input="showBaseUrlDropdown = true"
               @blur="setTimeout(() => showBaseUrlDropdown = false, 150)"
@@ -129,11 +140,11 @@ onMounted(loadSettings)
         </label>
 
         <label>
-          <span>模型名称</span>
+          <span>{{ t('settings.modelName') }}</span>
           <div class="autocomplete">
             <input
               v-model="modelName"
-              placeholder="glm-4-flash"
+              :placeholder="t('settings.modelNamePlaceholder')"
               @focus="showModelDropdown = true"
               @input="showModelDropdown = true"
               @blur="setTimeout(() => showModelDropdown = false, 150)"
@@ -152,14 +163,22 @@ onMounted(loadSettings)
         </label>
 
         <label>
-          <span>GitHub Token（可选，私有仓库使用）</span>
-          <input v-model="githubToken" type="password" placeholder="选填" />
+          <span>{{ t('settings.githubToken') }}</span>
+          <input v-model="githubToken" type="password" :placeholder="t('settings.githubTokenPlaceholder')" />
         </label>
-        <p class="hint">支持任意 OpenAI 兼容格式的模型，切换模型只需修改 Base URL 和模型名称。</p>
+
+        <label>
+          <span>{{ t('settings.language') }}</span>
+          <select v-model="locale" @change="handleSetLocale(locale)">
+            <option value="zh">中文</option>
+            <option value="en">English</option>
+          </select>
+        </label>
+        <p class="hint">{{ t('settings.hint') }}</p>
       </div>
       <div class="modal-footer">
-        <span v-if="saved" class="saved-msg">已保存</span>
-        <button :disabled="saving" @click="save">{{ saving ? '保存中...' : '保存配置' }}</button>
+        <span v-if="saved" class="saved-msg">{{ t('settings.saved') }}</span>
+        <button :disabled="saving" @click="save">{{ saving ? t('settings.saving') : t('settings.save') }}</button>
       </div>
     </div>
   </div>
@@ -259,6 +278,22 @@ onMounted(loadSettings)
 .saved-msg {
   color: var(--text-success);
   font-size: 13px;
+}
+
+.modal-body select {
+  padding: 8px 10px;
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  font-size: 13px;
+  outline: none;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  width: 100%;
+  cursor: pointer;
+}
+.modal-body select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-focus);
 }
 
 .autocomplete {

@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue'
+import { t } from '../../shared/i18n/index.js'
 import { marked } from 'marked'
 import { markedHighlight } from 'marked-highlight'
 import hljs from 'highlight.js/lib/core'
@@ -76,7 +77,7 @@ function renderMd(text) {
 
     <div v-if="loading && !content && !messages.length" class="loading">
       <div class="spinner"></div>
-      <span>等待分析结果...</span>
+      <span>{{ t('resultPanel.loading') }}</span>
     </div>
 
     <div v-if="messages.length" class="chat-area">
@@ -85,12 +86,12 @@ function renderMd(text) {
         :key="i"
         :class="['msg', msg.role === 'user' ? 'msg-user' : 'msg-assistant']"
       >
-        <div class="msg-label">{{ msg.role === 'user' ? '你' : 'AI' }}</div>
+        <div class="msg-label">{{ msg.role === 'user' ? t('chatInput.you') : 'AI' }}</div>
         <div class="msg-body" v-html="renderMd(msg.content)"></div>
       </div>
       <div v-if="loading" class="loading-inline">
         <div class="spinner small"></div>
-        <span>AI 正在输入...</span>
+        <span>{{ t('resultPanel.loading') }}</span>
       </div>
     </div>
 
