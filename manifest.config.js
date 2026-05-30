@@ -30,11 +30,28 @@ export default defineManifest({
 
   host_permissions: [
     'https://api.github.com/*',
-    'https://open.bigmodel.cn/*',
     'https://github.com/*',
+
+    // LLM API providers (OpenAI-compatible + Claude)
+    'https://api.openai.com/*',
+    'https://api.anthropic.com/*',
+    'https://open.bigmodel.cn/*',
     'https://api.deepseek.com/*',
     'https://api.siliconflow.cn/*',
-    'https://api.anthropic.com/*',
+    'https://dashscope.aliyuncs.com/*',
+    'https://api.moonshot.cn/*',
+    'https://api.minimax.chat/*',
+    'https://api.lingyiwanwu.com/*',
+    'https://api.groq.com/*',
+    'https://api.together.xyz/*',
+    'https://api.perplexity.ai/*',
+    'https://api.mistral.ai/*',
+    'https://api.x.ai/*',
+    'https://api.cohere.com/*',
+    'https://api.fireworks.ai/*',
+    'https://generativelanguage.googleapis.com/*',
+    'https://openrouter.ai/*',
+    'https://api.cerebras.ai/*',
   ],
   side_panel: {
     default_path: 'src/sidepanel/index.html',
