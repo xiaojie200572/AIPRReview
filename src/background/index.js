@@ -1,13 +1,13 @@
 import { parsePRUrl, getPRInfo, getPRFiles, getPRCommits } from './github.js'
 import { streamChat } from './llm/gateway.js'
 import { initCache, setCache, getCache, hasCache, clearCache } from './analysisCache.js'
-initCache()
+initCache().catch(() => {})
 import { preprocessDiff } from './diffPreprocessor.js'
 import { enrichContext } from './contextEnricher.js'
-import { buildSystemPrompt } from '../sidepanel/prompts/base.js'
-import { walkthroughPrompt } from '../sidepanel/prompts/walkthrough.js'
-import { reviewPrompt } from '../sidepanel/prompts/review.js'
-import { discussPrompt, buildDiscussSystemPrompt } from '../sidepanel/prompts/discuss.js'
+import { buildSystemPrompt } from '../shared/prompts/base.js'
+import { walkthroughPrompt } from '../shared/prompts/walkthrough.js'
+import { reviewPrompt } from '../shared/prompts/review.js'
+import { discussPrompt, buildDiscussSystemPrompt } from '../shared/prompts/discuss.js'
 
 const MODE_PROMPTS = {
   walkthrough: walkthroughPrompt,

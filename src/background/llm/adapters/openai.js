@@ -1,6 +1,7 @@
 function parseSSE(chunk) {
   const lines = chunk.split('\n')
-  const results = []
+  const tokens = []
+  let finishReason = null
   for (const line of lines) {
     if (!line.startsWith('data: ')) continue
     const payload = line.slice(6)
@@ -8,12 +9,13 @@ function parseSSE(chunk) {
     try {
       const parsed = JSON.parse(payload)
       const content = parsed.choices?.[0]?.delta?.content || ''
-      if (content) results.push(content)
+      if (content) tokens.push(content)
+      finishReason = parsed.choices?.[0]?.finish_reason || finishReason
     } catch {
       // skip malformed JSON lines
     }
   }
-  return results
+  return { tokens, finishReason }
 }
 
 export async function streamChat({ apiKey, baseUrl, model, messages, onChunk, onDone, onError, signal }) {
@@ -45,6 +47,7 @@ export async function streamChat({ apiKey, baseUrl, model, messages, onChunk, on
     const decoder = new TextDecoder()
     let fullText = ''
     let buffer = ''
+    let lastFinishReason = null
 
     while (true) {
       const { done, value } = await reader.read()
@@ -55,7 +58,8 @@ export async function streamChat({ apiKey, baseUrl, model, messages, onChunk, on
       buffer = parts.pop() || ''
 
       for (const part of parts) {
-        const tokens = parseSSE(part)
+        const { tokens, finishReason } = parseSSE(part)
+        if (finishReason) lastFinishReason = finishReason
         for (const token of tokens) {
           fullText += token
           onChunk(token)
@@ -64,11 +68,16 @@ export async function streamChat({ apiKey, baseUrl, model, messages, onChunk, on
     }
 
     if (buffer.trim()) {
-      const tokens = parseSSE(buffer)
+      const { tokens, finishReason } = parseSSE(buffer)
+      if (finishReason) lastFinishReason = finishReason
       for (const token of tokens) {
         fullText += token
         onChunk(token)
       }
+    }
+
+    if (lastFinishReason === 'length') {
+      fullText += '\n\n---\n⚠️ **输出被截断**：达到 Token 上限，结果不完整。请使用更长上下文的模型或分段分析。'
     }
 
     onDone(fullText)
