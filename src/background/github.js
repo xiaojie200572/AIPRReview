@@ -15,6 +15,11 @@ async function ghFetch(path, options = {}) {
   const res = await fetch(`${GITHUB_API}${path}`, { ...options, headers })
   if (!res.ok) {
     const msg = await res.text().catch(() => '')
+    if (res.status === 403 || res.status === 429) {
+      throw new Error(token
+        ? `GitHub API 请求超限（${res.status}），请稍后重试`
+        : `GitHub API 频率限制（${res.status}），请在设置中配置 GitHub Token 以解除限制（5000次/小时）`)
+    }
     throw new Error(`GitHub API ${res.status}: ${msg || res.statusText}`)
   }
   return res.json()
