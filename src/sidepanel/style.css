@@ -2,6 +2,7 @@
 
 body {
   margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 * {
   box-sizing: border-box;
