@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { marked } from 'marked'
 import { markedHighlight } from 'marked-highlight'
 import hljs from 'highlight.js/lib/core'
+import DOMPurify from 'dompurify'
 
 import javascript from 'highlight.js/lib/languages/javascript'
 import typescript from 'highlight.js/lib/languages/typescript'
@@ -61,11 +62,11 @@ const props = defineProps({
 
 const rendered = computed(() => {
   if (!props.content) return ''
-  return marked(props.content, { breaks: true, gfm: true })
+  return DOMPurify.sanitize(marked(props.content, { breaks: true, gfm: true }))
 })
 
 function renderMd(text) {
-  return marked(text, { breaks: true, gfm: true })
+  return DOMPurify.sanitize(marked(text, { breaks: true, gfm: true }))
 }
 </script>
 
