@@ -91,6 +91,14 @@ function onStreamChunk(payload) {
 }
 
 function onStreamDone(payload) {
+  if (payload._restored) {
+    if (mode.value !== 'discuss') {
+      modeContent.value[mode.value] = payload.fullText
+      modeCompleted.value[mode.value] = true
+    }
+    loading.value = false
+    return
+  }
   if (!streamActive.value) return
   streamActive.value = false
   if (mode.value === 'discuss') {
@@ -241,6 +249,7 @@ onMounted(async () => {
   if (prUrl) {
     savedUrl.value = prUrl
     parsedPR = parsePRUrl(prUrl)
+    send('RESTORE_RESULT', { url: prUrl, mode: mode.value })
   }
   const { darkMode: dm } = await chrome.storage.local.get('darkMode')
   darkMode.value = dm || false

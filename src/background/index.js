@@ -1,6 +1,7 @@
 import { parsePRUrl, getPRInfo, getPRFiles, getPRCommits } from './github.js'
 import { streamChat } from './llm.js'
-import { setCache, getCache, hasCache, clearCache } from './analysisCache.js'
+import { initCache, setCache, getCache, hasCache, clearCache } from './analysisCache.js'
+initCache()
 import { preprocessDiff } from './diffPreprocessor.js'
 import { enrichContext } from './contextEnricher.js'
 import { buildSystemPrompt } from '../sidepanel/prompts/base.js'
@@ -178,6 +179,14 @@ chrome.runtime.onConnect.addListener((port) => {
       case 'CANCEL_STREAM': {
         const ac = activeStreams.get(port)
         if (ac) ac.abort()
+        break
+      }
+      case 'RESTORE_RESULT': {
+        const { url, mode } = msg.payload
+        const cached = getCache(`${url}:${mode}`)
+        if (cached) {
+          port.postMessage({ type: 'STREAM_DONE', payload: { fullText: cached.result, _restored: true } })
+        }
         break
       }
       case 'GET_SETTINGS':
