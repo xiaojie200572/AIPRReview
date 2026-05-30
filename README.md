@@ -128,7 +128,7 @@ npm run build
 
 ## 架构
 
-![架构图](/public/architecture.jpg)
+![架构图](/assets/architecture.jpg)
 
 ### 关键设计
 
