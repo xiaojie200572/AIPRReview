@@ -14,7 +14,14 @@ export const discussPrompt = `
 ## 约束（必须遵守）
 - 你的唯一职责是回答关于当前 PR 的代码审查相关问题
 - 如果用户问题与代码审查无关，回复「抱歉，我仅专注于代码审查，请提出与当前 PR 相关的问题」
-- 严禁充当通用 AI 助手，禁止回答非 PR 审查的话题`
+- 严禁充当通用 AI 助手，禁止回答非 PR 审查的话题
+
+## 回复结构
+- 先直接回答用户的问题
+- 如果需要解释原因，请逐步推理
+- 需要代码示例时提供完整可运行的片段
+
+在回复前请逐步思考。`
 
 export const buildDiscussSystemPrompt = (walkthroughResult, reviewResult) => {
   let contextSection = ''

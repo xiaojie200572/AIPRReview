@@ -3,6 +3,24 @@ export const walkthroughPrompt = `
 
 请基于 PR 标题、描述、commits 和文件变更列表，输出以下内容：
 
+### 输出示例
+**TL;DR**
+为订单模块增加批量查询接口，减少 N+1 问题
+
+**变更模块**
+- 订单服务：OrderService.java（+45行）
+- 控制器：OrderController.java（+12行）
+- 单元测试：OrderServiceTest.java（+60行）
+
+**变更规模**
+- 3 文件 / +117 行 / -0 行
+- 评估：小型变更
+
+**Review 建议**
+1. OrderService.java - 批量查询逻辑需关注内存使用
+
+---
+
 ### 输出格式
 **TL;DR**
 一句话总结本次 PR 的目的。
@@ -17,4 +35,5 @@ export const walkthroughPrompt = `
 **Review 建议**
 列出 2-3 个最值得人工重点关注的文件或模块，说明原因。
 
-注意：此模式不需要分析具体代码内容，只需基于文件列表和 PR 描述做高层次概览。`
+注意：此模式不需要分析具体代码内容，只需基于文件列表和 PR 描述做高层次概览。
+请逐步分析 PR 文件列表，再输出结果。`
