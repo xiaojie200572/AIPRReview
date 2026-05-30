@@ -34,6 +34,7 @@ export default defineManifest({
     'https://github.com/*',
     'https://api.deepseek.com/*',
     'https://api.siliconflow.cn/*',
+    'https://api.anthropic.com/*',
   ],
   side_panel: {
     default_path: 'src/sidepanel/index.html',

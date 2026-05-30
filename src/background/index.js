@@ -1,5 +1,5 @@
 import { parsePRUrl, getPRInfo, getPRFiles, getPRCommits } from './github.js'
-import { streamChat } from './llm.js'
+import { streamChat } from './llm/gateway.js'
 import { initCache, setCache, getCache, hasCache, clearCache } from './analysisCache.js'
 initCache()
 import { preprocessDiff } from './diffPreprocessor.js'
