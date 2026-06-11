@@ -5,7 +5,7 @@ const DEFAULTS = {
 
 export async function getConfig() {
   const stored = await chrome.storage.local.get(['apiKey', 'baseUrl', 'modelName'])
-  const apiKey = stored.apiKey || import.meta.env.VITE_DEFAULT_API_KEY || ''
+  const apiKey = stored.apiKey || ''
   return {
     apiKey,
     baseUrl: (stored.baseUrl || DEFAULTS.baseUrl).replace(/\/+$/, ''),
